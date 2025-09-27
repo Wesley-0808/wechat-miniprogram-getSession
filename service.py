@@ -2,7 +2,7 @@ import os
 import json
 import traceback
 import requests
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import configparser
@@ -23,13 +23,10 @@ config_path = os.path.join(os.path.dirname(__file__), 'config.conf')
 config.read(config_path)
 
 @app.post("/wx-login")
-async def wx_login(request: Request):
+async def wx_login(js_code:str = Form(""), appid:str = Form("")):
     try:
-        _data = request.query_params
         try:
-            js_code = _data.get("js_code", "")
             # 获取密钥配置
-            appid = _data.get("appid", "")
             appSecret = config.get(appid, 'appSecret')
             if js_code == "":
                 return {"errcode": -1001, "errmsg": "Invalid Parameter"}
